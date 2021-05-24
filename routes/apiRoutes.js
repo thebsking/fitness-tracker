@@ -40,7 +40,7 @@ router.put('/api/workouts/:id', (req, res) => {
 router.get('/api/workouts/range', (reg, res) => {
     Workout.aggregate([{
         $addFields: {
-            totalMinutes: {$sum: '$exercises.duration'},
+            totalDuration: {$sum: '$exercises.duration'},
             totalWeight: {$sum: '$exercises.weight'}
         }
     }]).limit(5)
