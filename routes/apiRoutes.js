@@ -1,0 +1,55 @@
+const router = require('express').Router();
+const Workout = require('../models/Workout.js');
+
+router.get('/api/workouts', (req, res) => {
+    Workout.find({})
+        .then(dbTransaction => {
+            res.json(dbTransaction);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        })
+})
+
+router.post('/api/workouts', ({ body }, res) => {
+    Workout.create(body)
+        .then(dbTransaction => {
+            res.json(dbTransaction);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        })
+});
+
+router.put('/api/workouts/:id', (req, res) => {
+    Workout.findByIdAndUpdate(req.params.id, {
+        $push: {
+            exercises: req.body,
+        }
+    }, {
+        new: true,
+    })
+        .then(data => {
+            res.json(data);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        })
+});
+
+router.get('/api/workouts/range', (reg, res) => {
+    Workout.aggregate([{
+        $addFields: {
+            totalMinutes: {$sum: '$exercises.duration'},
+            totalWeight: {$sum: '$exercises.weight'}
+        }
+    }]).limit(5)
+        .then(data => {
+            res.json(data);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        })
+});
+
+module.exports = router;
