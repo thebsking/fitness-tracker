@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Workout = require('../models');
+const {Workout} = require('../models');
 
 router.get('/api/workouts', (req, res) => {
     Workout.find({})
@@ -43,7 +43,7 @@ router.get('/api/workouts/range', (reg, res) => {
             totalDuration: { $sum: '$exercises.duration' },
             totalWeight: { $sum: '$exercises.weight' }
         }
-    }]).limit(5)
+    }]).limit(7)
         .then(data => {
             res.json(data);
         })
